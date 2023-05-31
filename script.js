@@ -12,6 +12,7 @@ const state = {
     flippedCards: 0,
     totalFlips: 0,
     totalTime: 0,
+    errorCount: 0, // Contador de errores
     loop: null
 }
 
@@ -35,7 +36,7 @@ const pickRandom = (array, items) => {
 
     for (let i = 0; i < items; i++) {
         const randomIndex = Math.floor(Math.random() * clonedArray.length)
-        
+
         randomPicks.push(clonedArray[randomIndex])
         clonedArray.splice(randomIndex, 1)
     }
@@ -107,6 +108,15 @@ const flipCard = card => {
         if (flippedCards[0].innerText === flippedCards[1].innerText) {
             flippedCards[0].classList.add('matched')
             flippedCards[1].classList.add('matched')
+        } else {
+            state.errorCount++ // Incrementar el contador de errores
+
+            if (state.errorCount === 3) {
+                selectors.boardContainer.classList.add('flipped')
+                alert("¡Perdiste! Has cometido 3 errores.")
+                clearInterval(state.loop)
+                return // Salir de la función para evitar seguir ejecutando el código
+            }
         }
 
         setTimeout(() => {
@@ -119,8 +129,8 @@ const flipCard = card => {
             selectors.win.innerHTML = `
                 <span class="win-text">
                     You won!<br />
-                    with <span class="highlight">${state.totalFlips}</span> moves<br />
-                    under <span class="highlight">${state.totalTime}</span> seconds
+                    with <span class="highlight">${state.totalFlips}</span> movimientos<br />
+                    under <span class="highlight">${state.totalTime}</span> segundos
                 </span>
             `
 
